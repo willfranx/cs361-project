@@ -3,11 +3,16 @@
 import io
 import requests
 import json
+import os
+from dotenv import load_dotenv
 from PIL import Image, ImageTk
 from tkinter import ttk
 
+load_dotenv()
+
 def generate_image(root, image_label, window_width, window_height):
-    url = "https://api.nasa.gov/planetary/apod?count=1&api_key=6dtniaxOZcCirD2tJ2UlG8hUxSYxlI5GwxCFlCcH"
+    api_key = os.getenv('NASA_API_KEY')
+    url = f"https://api.nasa.gov/planetary/apod?count=1&api_key={api_key}"
     response = requests.get(url)
     response.raise_for_status()
     data = json.loads(response.text)[0]  # get the first item from the JSON response
@@ -39,3 +44,11 @@ def generate_image(root, image_label, window_width, window_height):
     # Update the image of the label
     image_label.config(image=photo)
     image_label.image = photo # keep a reference to the image
+
+    # Return the necessary information
+    return {
+        'title': data.get('title', 'No title provided'),
+        'copyright': data.get('copyright', 'No copyright information provided'),
+        'explanation': data.get('explanation', 'No explanation provided'),
+        'url': f"https://apod.nasa.gov/apod/ap{data['date'][2:].replace('-', '')}.html"
+    }
