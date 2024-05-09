@@ -1,10 +1,16 @@
 import tkinter as tk
-
 from tkinter import messagebox
-
 from tkinter import ttk
+
+from PIL import Image, ImageTk
+import io
+import urllib.request
+
 import webbrowser
+
 from ttkthemes import ThemedTk
+
+import more_images_client
 
 from image_service import generate_image
 from about_service import open_about_window
@@ -61,25 +67,56 @@ info_frame.grid(sticky='we')
 # Create labels for the title, copyright, explanation, and url
 title_label = tk.Label(info_frame, text=['title'])
 copyright_label = tk.Label(info_frame, text=['copyright'])
-explanation_label = tk.Label(info_frame, text=['explanation'])
+explanation_button = tk.Button(info_frame, text="Show explanation")
 url_label = tk.Label(info_frame, text=['url'], fg="blue", cursor="hand2")
+similar_images_button = tk.Button(info_frame, text="Show more images")
+
 
 def generate_and_update():
     info = generate_image(root, image_label, window_width, window_height)
+    dir_button.config(text="Generate another image")
     title_label.config(text=info['title'])
     copyright_label.config(text=info['copyright'])
-    explanation_label.config(text=info['explanation'])
     url_label.config(text=info['url'])
+    explanation_button.config(command=lambda: messagebox.showinfo("Explanation", info['explanation']))
+    more_image_urls = more_images_client.search_for_more_images(info['explanation'])
+    similar_images_button.config(command=lambda: display_images(more_image_urls))
 
 def open_url(event):
     webbrowser.open_new(event.widget.cget("text"))
 # Bind a click event to the url label
 url_label.bind("<Button-1>", open_url)
 
+def display_images(urls):
+    # Create a new window
+    image_window = tk.Toplevel(root)
+
+    # Load and display each image
+    for url in urls:
+        try:
+            with urllib.request.urlopen(url) as u:
+                raw_data = u.read()
+        except urllib.error.HTTPError:
+            print(f"Failed to fetch image from {url}")
+            continue
+
+        im = Image.open(io.BytesIO(raw_data))
+
+        # Resize the image
+        max_size = (300, 300)
+        im.thumbnail(max_size)
+
+        image = ImageTk.PhotoImage(im)
+        label = tk.Label(image_window, image=image)
+        label.image = image  # keep a reference to the image to prevent it from being garbage collected
+        label.pack()
+
+
+similar_images_button.pack()
 # Pack the labels into the frame
 title_label.pack()
 copyright_label.pack()
-explanation_label.pack()
+explanation_button.pack()
 url_label.pack()
 
 def on_close():
