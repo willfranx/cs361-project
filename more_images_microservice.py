@@ -9,6 +9,7 @@ socket.bind("tcp://localhost:5555")
 
 while True:
     message = socket.recv_string()
+    print(f"Received request: {message}")
 
     response = requests.get(f"https://images-api.nasa.gov/search?q={message}&media_type=image&page_size=20")
     data = response.json()

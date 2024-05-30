@@ -39,7 +39,8 @@ def open_neo_window(root):
     # Receive the response from the server
     data = socket.recv_json()
 
-    print(data)
+    for date in data['near_earth_objects']:
+        print(date)
 
     def format_data(data, indent=0):
         if isinstance(data, dict):
@@ -52,7 +53,7 @@ def open_neo_window(root):
     keys_to_skip = ['next', 'previous', 'self', 'links']
 
     # Create a Text widget with a monospace font
-    text_widget = tk.Text(about_window, font=("Courier", 15))
+    text_widget = tk.Text(about_window, font=("Courier", 12))
     text_widget.pack(side="left", fill="both", expand=True)
 
     # Create a Scrollbar and associate it with the Text widget
@@ -66,10 +67,3 @@ def open_neo_window(root):
     for key in sorted_keys:
         formatted_data = format_data(data[key])
         text_widget.insert('end', formatted_data)
-
-    # Add color to the dates
-    text_widget.tag_configure("date", foreground="blue")
-    for key in sorted_keys:
-        start_index = text_widget.search(key, "1.0", stopindex="end")
-        end_index = text_widget.search("\n", start_index)
-        text_widget.tag_add("date", start_index, end_index)

@@ -12,6 +12,7 @@ socket.bind("tcp://localhost:7777")
 while True:
     # Wait for a request from the client
     request = socket.recv_string()
+    print(f"Received request: {request}")
 
     if request == "about":
         # Send a response to the client

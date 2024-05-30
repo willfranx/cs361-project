@@ -13,6 +13,8 @@ while True:
     # Wait for a request from the client
     request = socket.recv_string()
 
+    print(f"Received request: {request}")
+
     if request == "about":
         # Send a response to the client
         socket.send_string("This application generates a random image from NASA's Astronomy Photo of the Day (APOD).")

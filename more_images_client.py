@@ -49,12 +49,13 @@ def search_for_more_images(explanation):
         socket.send_string(entity)
         message = socket.recv_string()
         data = json.loads(message)
-        print("Received response: ", data)
 
         # Extract the nasa_id and construct the URL for each item
         for item in data['collection']['items']:
             nasa_id = item['data'][0]['nasa_id']
             url = f"https://images-assets.nasa.gov/image/{nasa_id}/{nasa_id}~orig.jpg"
+            print("Received response: ", url)
+
             urls.append(url)
 
     # Return 3 random URLs

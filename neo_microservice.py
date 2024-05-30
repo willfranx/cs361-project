@@ -21,7 +21,6 @@ current_date = datetime.now()
 
 # Format the date as "YYYY-MM-DD"
 formatted_date = current_date.strftime("%Y-%m-%d")
-print(formatted_date)
 
 # Send a GET request to the API
 api_key = os.getenv('NASA_API_KEY')
@@ -30,13 +29,18 @@ url = f"https://api.nasa.gov/neo/rest/v1/feed?start_date={formatted_date}&api_ke
 while True:
     # Wait for a request from the client
     request = socket.recv_string()
+    print(f"Received request: {request}")
 
     if request == "get_data":
         # Process the request
         response = requests.get(url)
-        print(response)
+        
         response.raise_for_status()
+
         data = response.json()
+
+        for date in data['near_earth_objects']:
+            print(date)
 
         # Send the response to the client
         socket.send_json(data)
