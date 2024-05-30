@@ -3,9 +3,16 @@
 import tkinter as tk
 from tkinter import ttk
 
-def open_about_window(root):
+import zmq
+
+# Set up the ZeroMQ context and socket
+context = zmq.Context()
+socket = context.socket(zmq.REQ)
+socket.connect("tcp://localhost:7777")
+
+def open_about_neo_window(root):
     about_window = tk.Toplevel(root)
-    about_window.title("About this app")
+    about_window.title("About Near-Earth Objects (NEOs)")
 
     # Set window size
     window_width = 400
@@ -22,5 +29,14 @@ def open_about_window(root):
     # Set window size and position
     about_window.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
 
-    about_label = ttk.Label(about_window, text="This is a random image generator app using NASA's APOD API.")
-    about_label.pack()
+    socket.send_string("about")
+    response = socket.recv_string()
+    print(response)
+
+    # Create a Text widget
+    about_text = tk.Text(about_window, wrap=tk.WORD)
+    about_text.insert(tk.END, response)
+    about_text.pack()
+
+    # Disable editing
+    about_text.config(state=tk.DISABLED)

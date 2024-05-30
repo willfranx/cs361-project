@@ -13,7 +13,9 @@ from ttkthemes import ThemedTk
 import more_images_client
 
 from image_service import generate_image
-from about_service import open_about_window
+from about_client import open_about_window
+from neo_client import open_neo_window
+from about_neo_client import open_about_neo_window
 
 
 root = ThemedTk(theme="sun-valley")
@@ -55,10 +57,24 @@ dir_button.pack(side="top")  # pack the button into the frame
 
 about_button = ttk.Button(
     button_frame,  # parent widget is the button frame
-    text="About",
+    text="About this app",
     command=lambda: open_about_window(root)  # function to call when the About button is clicked
 )
 about_button.pack(side="top")
+
+neo_button = ttk.Button(
+    button_frame,  # parent widget is the button frame
+    text="View this week's Near-Earth Objects (NEOs)",
+    command=lambda: open_neo_window(root)  # function to call when the About button is clicked
+)
+neo_button.pack(side="top")
+
+about_neo_button = ttk.Button(
+    button_frame,  # parent widget is the button frame
+    text="About Near-Earth Objects (NEOs)",
+    command=lambda: open_about_neo_window(root)  # function to call when the About button is clicked
+)
+about_neo_button.pack(side="top")
 
 # Create a new frame at the bottom of the window
 info_frame = tk.Frame(root)
